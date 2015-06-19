@@ -2,6 +2,24 @@ FROM srenault/cheminot.docker.debian
 
 MAINTAINER Sebastien Renault <srenault.contact@gmail.com>
 
+# Update m.cheminot.plugin
+
+WORKDIR /app/m.cheminot.plugin
+
+RUN git pull origin master
+
+# Update cheminot.c
+
+WORKDIR /app/cheminot.c
+
+RUN git pull origin master
+
+WORKDIR jni
+
+RUN cmake .
+
+RUN make
+
 # Prepare cheminotm
 
 WORKDIR /app
