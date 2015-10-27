@@ -28,7 +28,7 @@ RUN git clone https://github.com/google/protobuf.git
 
 WORKDIR protobuf
 
-RUN git checkout e9a122eb19ec54dbca15da80355ed0c17cada9b1
+RUN git checkout d4569d1f5ede96238dbb87b0ecc1fdcfbd399f62
 
 RUN sh autogen.sh
 
