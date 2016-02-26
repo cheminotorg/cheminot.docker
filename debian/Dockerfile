@@ -1,57 +1,31 @@
-FROM debian:latest
+FROM debian:8.3
 
 MAINTAINER Sebastien Renault <srenault.contact@gmail.com>
 
 RUN apt-get -y update && apt-get -y upgrade
 
-RUN apt-get -y install git
-
-RUN apt-get -y install cmake
-
 RUN apt-get -y install wget
 
-RUN apt-get -y install curl
+RUN apt-get -y install apt-transport-https ca-certificates
 
-RUN apt-get -y install unzip
-
-RUN apt-get -y install dh-autoreconf
-
-RUN apt-get -y install libsqlite3-dev
+RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
 RUN apt-get -y install openjdk-7-jdk
 
-WORKDIR /app
+RUN wget -O - https://debian.neo4j.org/neotechnology.gpg.key | apt-key add -
 
-# Build protobuf
+RUN echo 'deb http://debian.neo4j.org/repo stable/' > /tmp/neo4j.list
 
-RUN git clone https://github.com/google/protobuf.git
+RUN mv /tmp/neo4j.list /etc/apt/sources.list.d
 
-WORKDIR protobuf
+RUN echo "deb https://apt.dockerproject.org/repo debian-jessie main" > /etc/apt/sources.list.d/docker.list
 
-RUN git checkout d4569d1f5ede96238dbb87b0ecc1fdcfbd399f62
+RUN apt-get -y update
 
-RUN sh autogen.sh
+RUN apt-cache policy docker-engine
 
-RUN ./configure
+RUN apt-get -y upgrade
 
-RUN make && make install
+RUN apt-get -y install docker-engine
 
-# Build cheminot.c
-
-WORKDIR /app
-
-RUN git clone https://github.com/cheminotorg/m.cheminot.plugin.git
-
-RUN git clone https://github.com/cheminotorg/cheminot.c.git
-
-WORKDIR /app/cheminot.c/lib
-
-RUN ln -s ../../protobuf/ protobuf
-
-WORKDIR /app/cheminot.c/jni
-
-RUN cmake .
-
-RUN make
-
-RUN ldconfig /usr/local/lib
+RUN apt-get -y install neo4j=2.3.1
